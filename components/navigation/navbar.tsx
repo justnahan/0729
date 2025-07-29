@@ -80,37 +80,41 @@ export function NavBar() {
             </Button>
 
             {/* Shopping Cart */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative text-gray-600 hover:text-[#FF6B35]"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {cartCount > 0 && (
-                <Badge 
-                  className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs bg-[#FF6B35] hover:bg-orange-600"
-                >
-                  {cartCount}
-                </Badge>
-              )}
-            </Button>
-
-            {/* Notifications */}
-            {isLoggedIn && (
+            <Link href="/cart">
               <Button
                 variant="ghost"
                 size="sm"
                 className="relative text-gray-600 hover:text-[#FF6B35]"
               >
-                <Bell className="h-5 w-5" />
-                {notificationCount > 0 && (
+                <ShoppingCart className="h-5 w-5" />
+                {cartCount > 0 && (
                   <Badge 
-                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs bg-red-500 hover:bg-red-600"
+                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs bg-[#FF6B35] hover:bg-orange-600"
                   >
-                    {notificationCount}
+                    {cartCount}
                   </Badge>
                 )}
               </Button>
+            </Link>
+
+            {/* Notifications */}
+            {isLoggedIn && (
+              <Link href="/notifications">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="relative text-gray-600 hover:text-[#FF6B35]"
+                >
+                  <Bell className="h-5 w-5" />
+                  {notificationCount > 0 && (
+                    <Badge 
+                      className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs bg-red-500 hover:bg-red-600"
+                    >
+                      {notificationCount}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
             )}
 
             {/* User Menu */}
@@ -134,14 +138,18 @@ export function NavBar() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>個人資料</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Package className="mr-2 h-4 w-4" />
-                    <span>我的訂單</span>
-                  </DropdownMenuItem>
+                  <Link href="/profile">
+                    <DropdownMenuItem>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>個人資料</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/orders">
+                    <DropdownMenuItem>
+                      <Package className="mr-2 h-4 w-4" />
+                      <span>我的訂單</span>
+                    </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem>
                     <Truck className="mr-2 h-4 w-4" />
                     <span>代買記錄</span>
@@ -232,20 +240,24 @@ export function NavBar() {
                         </div>
                       </div>
                       
-                      <button
-                        className="w-full text-left px-4 py-3 text-gray-700 hover:text-[#FF6B35] hover:bg-orange-50 rounded-lg transition-colors"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <User className="inline mr-2 h-4 w-4" />
-                        個人資料
-                      </button>
-                      <button
-                        className="w-full text-left px-4 py-3 text-gray-700 hover:text-[#FF6B35] hover:bg-orange-50 rounded-lg transition-colors"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <Package className="inline mr-2 h-4 w-4" />
-                        我的訂單
-                      </button>
+                      <Link href="/profile">
+                        <button
+                          className="w-full text-left px-4 py-3 text-gray-700 hover:text-[#FF6B35] hover:bg-orange-50 rounded-lg transition-colors"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <User className="inline mr-2 h-4 w-4" />
+                          個人資料
+                        </button>
+                      </Link>
+                      <Link href="/orders">
+                        <button
+                          className="w-full text-left px-4 py-3 text-gray-700 hover:text-[#FF6B35] hover:bg-orange-50 rounded-lg transition-colors"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <Package className="inline mr-2 h-4 w-4" />
+                          我的訂單
+                        </button>
+                      </Link>
                       <button
                         className="w-full text-left px-4 py-3 text-gray-700 hover:text-[#FF6B35] hover:bg-orange-50 rounded-lg transition-colors"
                         onClick={() => setIsOpen(false)}

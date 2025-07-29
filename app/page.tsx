@@ -147,13 +147,15 @@ export default function HomePage() {
                 <p className="text-lg opacity-90 mb-6">
                   利用空閒時間，為社區提供代買服務並獲得收入
                 </p>
-                <Button 
-                  size="lg"
-                  variant="secondary"
-                  className="bg-white text-[#FF6B35] hover:bg-gray-100 font-semibold px-8 py-4 text-lg"
-                >
-                  成為代買者
-                </Button>
+                <Link href="/register">
+                  <Button 
+                    size="lg"
+                    variant="secondary"
+                    className="bg-white text-[#FF6B35] hover:bg-gray-100 font-semibold px-8 py-4 text-lg"
+                  >
+                    成為代買者
+                  </Button>
+                </Link>
               </div>
             )}
           </div>
@@ -346,14 +348,16 @@ export default function HomePage() {
                 開始購物
               </Button>
             </Link>
-            <Button 
-              size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-[#FF6B35] font-semibold px-8"
-            >
-              <Truck className="w-5 h-5 mr-2" />
-              成為代買者
-            </Button>
+            <Link href="/register">
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-[#FF6B35] font-semibold px-8"
+              >
+                <Truck className="w-5 h-5 mr-2" />
+                成為代買者
+              </Button>
+            </Link>
             <Link href="/contact">
               <Button 
                 size="lg"

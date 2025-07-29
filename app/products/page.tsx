@@ -25,13 +25,23 @@ interface Product {
 }
 
 async function fetchProducts(): Promise<Product[]> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products`, {
-    cache: 'no-store'
-  })
-  if (!response.ok) {
-    throw new Error('Failed to fetch products')
+  try {
+    // Server-side: read directly from JSON file for better performance
+    const { promises: fs } = await import('fs')
+    const path = await import('path')
+    const jsonPath = path.join(process.cwd(), 'public', 'products.json')
+    const fileContents = await fs.readFile(jsonPath, 'utf8')
+    return JSON.parse(fileContents)
+  } catch (error) {
+    // Fallback to API call if file read fails
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products`, {
+      cache: 'no-store'
+    })
+    if (!response.ok) {
+      throw new Error('Failed to fetch products')
+    }
+    return response.json()
   }
-  return response.json()
 }
 
 function formatPrice(cents: number): string {
