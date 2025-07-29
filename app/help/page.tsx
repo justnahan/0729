@@ -40,10 +40,10 @@ const helpCategories = [
     color: 'text-blue-600 bg-blue-50 border-blue-200',
     description: '了解如何開始使用現在買',
     articles: [
-      { title: '如何註冊帳戶', href: '/help/getting-started/register' },
-      { title: '平台介紹與功能', href: '/help/getting-started/overview' },
-      { title: '安全須知', href: '/help/getting-started/safety' },
-      { title: '首次下單教學', href: '/help/getting-started/first-order' }
+      { title: '如何註冊帳戶', href: '/register' as const },
+      { title: '平台介紹與功能', href: '/about' as const },
+      { title: '安全須知', href: '/legal/terms' as const },
+      { title: '首次下單教學', href: '/products' as const }
     ]
   },
   {
@@ -53,10 +53,10 @@ const helpCategories = [
     color: 'text-[#FF6B35] bg-orange-50 border-orange-200',
     description: '關於下單和付款的完整指南',
     articles: [
-      { title: '如何發起代買需求', href: '/help/buying/create-order' },
-      { title: '選擇代買者技巧', href: '/help/buying/choose-proxy' },
-      { title: '付款方式說明', href: '/help/buying/payment' },
-      { title: '訂單狀態追蹤', href: '/help/buying/order-tracking' }
+      { title: '如何發起代買需求', href: '/products' as const },
+      { title: '選擇代買者技巧', href: '/order' as const },
+      { title: '付款方式說明', href: '/contact/faq' as const },
+      { title: '訂單狀態追蹤', href: '/orders' as const }
     ]
   },
   {
@@ -66,10 +66,10 @@ const helpCategories = [
     color: 'text-[#2ECC71] bg-green-50 border-green-200',
     description: '成為代買者的完整指南',
     articles: [
-      { title: '如何成為代買者', href: '/help/proxy/become-proxy' },
-      { title: '接單流程說明', href: '/help/proxy/accept-orders' },
-      { title: '收益計算方式', href: '/help/proxy/earnings' },
-      { title: '代買者評價系統', href: '/help/proxy/rating-system' }
+      { title: '如何成為代買者', href: '/register' as const },
+      { title: '接單流程說明', href: '/contact/faq' as const },
+      { title: '收益計算方式', href: '/contact/faq' as const },
+      { title: '代買者評價系統', href: '/contact/faq' as const }
     ]
   },
   {
@@ -79,10 +79,10 @@ const helpCategories = [
     color: 'text-purple-600 bg-purple-50 border-purple-200',
     description: '管理個人資料和帳戶設定',
     articles: [
-      { title: '修改個人資料', href: '/help/account/profile' },
-      { title: '地址管理', href: '/help/account/addresses' },
-      { title: '通知設定', href: '/help/account/notifications' },
-      { title: '帳戶安全設定', href: '/help/account/security' }
+      { title: '修改個人資料', href: '/profile' as const },
+      { title: '地址管理', href: '/profile' as const },
+      { title: '通知設定', href: '/notifications' as const },
+      { title: '帳戶安全設定', href: '/profile' as const }
     ]
   },
   {
@@ -92,10 +92,10 @@ const helpCategories = [
     color: 'text-red-600 bg-red-50 border-red-200',
     description: '付款問題和退款申請',
     articles: [
-      { title: '支援的付款方式', href: '/help/payment/methods' },
-      { title: '如何申請退款', href: '/help/payment/refund' },
-      { title: '交易爭議處理', href: '/help/payment/disputes' },
-      { title: '發票開立說明', href: '/help/payment/invoice' }
+      { title: '支援的付款方式', href: '/contact/faq' as const },
+      { title: '如何申請退款', href: '/contact/faq' as const },
+      { title: '交易爭議處理', href: '/contact' as const },
+      { title: '發票開立說明', href: '/legal/terms' as const }
     ]
   },
   {
@@ -105,13 +105,13 @@ const helpCategories = [
     color: 'text-gray-600 bg-gray-50 border-gray-200',
     description: '解決技術問題和故障排除',
     articles: [
-      { title: '常見技術問題', href: '/help/technical/common-issues' },
-      { title: 'App 使用問題', href: '/help/technical/app-issues' },
-      { title: '網站相容性', href: '/help/technical/compatibility' },
-      { title: '帳戶登入問題', href: '/help/technical/login-issues' }
+      { title: '常見技術問題', href: '/contact/faq' as const },
+      { title: 'App 使用問題', href: '/contact/faq' as const },
+      { title: '網站相容性', href: '/contact/faq' as const },
+      { title: '帳戶登入問題', href: '/contact' as const }
     ]
   }
-]
+] as const
 
 const quickActions = [
   {
@@ -119,23 +119,23 @@ const quickActions = [
     description: '立即與客服團隊對話',
     icon: MessageCircle,
     color: 'bg-[#2ECC71] hover:bg-green-600',
-    href: '/contact'
+    href: '/contact' as const
   },
   {
     title: '常見問題',
     description: '快速找到常見問題解答',
     icon: Book,
     color: 'bg-[#FF6B35] hover:bg-orange-600',
-    href: '/contact/faq'
+    href: '/contact/faq' as const
   },
   {
     title: '使用教學',
     description: '觀看詳細操作教學影片',
     icon: Video,
     color: 'bg-blue-600 hover:bg-blue-700',
-    href: '/help/tutorials'
+    href: '/contact/faq' as const
   }
-]
+] as const
 
 export default function HelpCenterPage() {
   return (

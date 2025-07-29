@@ -139,7 +139,7 @@ export default function OrderPage() {
         orderId: `NOW${Date.now()}`,
         items: cartItems,
         totalAmount: subtotal + deliveryFee + serviceFee,
-        selectedProxy: suggestedProxies.find(p => p.id.toString() === selectedProxy),
+        selectedProxy: availableProxies.find(p => p.id.toString() === selectedProxy),
         specialRequests,
         timestamp: new Date().toISOString()
       }
