@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ReloadButton } from '@/components/reload-button'
 import { ProductCard } from '@/components/product-card'
 
 export const metadata: Metadata = {
@@ -24,32 +23,12 @@ interface Product {
 }
 
 async function fetchProducts(): Promise<Product[]> {
-  try {
-    // Prioritize API route for better production stability
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
-                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-    
-    const response = await fetch(`${baseUrl}/api/products`, {
-      cache: 'no-store'
-    })
-    
-    if (!response.ok) {
-      throw new Error('API request failed')
-    }
-    
-    return response.json()
-  } catch (error) {
-    // Fallback to direct file read only if API fails
-    try {
-      const { promises: fs } = await import('fs')
-      const path = await import('path')
-      const jsonPath = path.join(process.cwd(), 'public', 'products.json')
-      const fileContents = await fs.readFile(jsonPath, 'utf8')
-      return JSON.parse(fileContents)
-    } catch (fsError) {
-      throw new Error('Failed to fetch products from both API and file system')
-    }
-  }
+  // Read directly from JSON file for reliable Server Component data access
+  const { promises: fs } = await import('fs')
+  const path = await import('path')
+  const jsonPath = path.join(process.cwd(), 'public', 'products.json')
+  const fileContents = await fs.readFile(jsonPath, 'utf8')
+  return JSON.parse(fileContents)
 }
 
 function formatPrice(cents: number): string {
@@ -80,24 +59,15 @@ function LoadingGrid() {
 }
 
 async function ProductGrid() {
-  try {
-    const products = await fetchProducts()
-    
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-    )
-  } catch {
-    return (
-      <div className="text-center py-12">
-        <div className="text-gray-500 text-lg mb-4">無法載入商品資訊</div>
-        <ReloadButton />
-      </div>
-    )
-  }
+  const products = await fetchProducts()
+  
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {products.map((product) => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  )
 }
 
 export default function ProductsPage() {
