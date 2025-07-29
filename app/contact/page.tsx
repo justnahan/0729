@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -259,9 +260,11 @@ export default function ContactPage() {
                     ))}
                   </div>
                   <div className="mt-6 text-center">
-                    <Button variant="outline" className="border-[#FF6B35] text-[#FF6B35] hover:bg-orange-50">
-                      查看更多問題
-                    </Button>
+                    <Link href="/contact/faq">
+                      <Button variant="outline" className="border-[#FF6B35] text-[#FF6B35] hover:bg-orange-50">
+                        查看更多問題
+                      </Button>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>

@@ -1,4 +1,7 @@
+'use client'
+
 import { Metadata } from 'next'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -17,46 +20,17 @@ import {
   ArrowLeft
 } from 'lucide-react'
 
-export const metadata: Metadata = {
-  title: '購物車 | 現在買 NowBuy',
-  description: '查看您的購物車商品，準備下單找代買者',
-  openGraph: {
-    title: '購物車 | 現在買 NowBuy',
-    description: '查看您的購物車商品，準備下單找代買者',
-    type: 'website',
-  }
-}
+// Metadata is handled by layout since this is a client component
 
-// Mock cart data - in real app this would come from state management or API
-const cartItems = [
-  {
-    id: 1,
-    name: '經典白色運動鞋',
-    price: 2980,
-    quantity: 1,
-    image: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=400&h=400&auto=format&fit=crop',
-    store: '全聯福利中心',
-    available: true
-  },
-  {
-    id: 2,
-    name: '北歐風格陶瓷馬克杯',
-    price: 359,
-    quantity: 2,
-    image: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&h=400&auto=format&fit=crop',
-    store: '7-Eleven',
-    available: true
-  },
-  {
-    id: 3,
-    name: '手工編織羊毛圍巾',
-    price: 1280,
-    quantity: 1,
-    image: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=400&h=400&auto=format&fit=crop',
-    store: '家樂福',
-    available: false
-  }
-]
+interface CartItem {
+  id: number
+  name: string
+  price: number
+  quantity: number
+  image: string
+  store: string
+  available: boolean
+}
 
 const suggestedProxies = [
   {
@@ -86,6 +60,58 @@ function formatPrice(price: number): string {
 }
 
 export default function CartPage() {
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Load cart items from localStorage on component mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cart')
+    if (savedCart) {
+      setCartItems(JSON.parse(savedCart))
+    }
+    setLoading(false)
+  }, [])
+
+  // Save cart items to localStorage whenever cartItems changes
+  useEffect(() => {
+    if (!loading) {
+      localStorage.setItem('cart', JSON.stringify(cartItems))
+    }
+  }, [cartItems, loading])
+
+  const updateQuantity = (id: number, newQuantity: number) => {
+    if (newQuantity <= 0) {
+      removeItem(id)
+      return
+    }
+    
+    setCartItems(prev => 
+      prev.map(item => 
+        item.id === id ? { ...item, quantity: newQuantity } : item
+      )
+    )
+  }
+
+  const removeItem = (id: number) => {
+    setCartItems(prev => prev.filter(item => item.id !== id))
+  }
+
+  const clearCart = () => {
+    setCartItems([])
+    localStorage.removeItem('cart')
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF6B35] mx-auto mb-4"></div>
+          <p className="text-gray-600">載入購物車...</p>
+        </div>
+      </div>
+    )
+  }
+
   const availableItems = cartItems.filter(item => item.available)
   const unavailableItems = cartItems.filter(item => !item.available)
   
@@ -118,7 +144,22 @@ export default function CartPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+        {cartItems.length === 0 ? (
+          // Empty cart state
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+              <ShoppingCart className="w-12 h-12 text-gray-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">購物車是空的</h2>
+            <p className="text-gray-600 mb-8">還沒有添加任何商品到購物車</p>
+            <Link href="/products">
+              <Button className="bg-[#FF6B35] hover:bg-orange-600 text-white font-semibold px-8 py-3">
+                開始購物
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-6">
             {/* Available Items */}
@@ -153,11 +194,21 @@ export default function CartPage() {
                           </div>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <Button variant="outline" size="sm" className="w-8 h-8 p-0">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="w-8 h-8 p-0"
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              >
                                 <Minus className="w-4 h-4" />
                               </Button>
                               <span className="font-medium min-w-[40px] text-center">{item.quantity}</span>
-                              <Button variant="outline" size="sm" className="w-8 h-8 p-0">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="w-8 h-8 p-0"
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              >
                                 <Plus className="w-4 h-4" />
                               </Button>
                             </div>
@@ -172,7 +223,12 @@ export default function CartPage() {
                           </div>
                         </div>
                         
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                          onClick={() => removeItem(item.id)}
+                        >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -218,7 +274,12 @@ export default function CartPage() {
                           </Badge>
                         </div>
                         
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                          onClick={() => removeItem(item.id)}
+                        >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -371,6 +432,7 @@ export default function CartPage() {
             </Card>
           </div>
         </div>
+        )}
       </div>
     </div>
   )

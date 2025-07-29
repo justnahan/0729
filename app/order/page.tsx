@@ -1,4 +1,6 @@
-import { Metadata } from 'next'
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -23,14 +25,16 @@ import {
   Package
 } from 'lucide-react'
 
-export const metadata: Metadata = {
-  title: '下單確認 | 現在買 NowBuy',
-  description: '確認您的訂單資訊並選擇代買者',
-  openGraph: {
-    title: '下單確認 | 現在買 NowBuy',
-    description: '確認您的訂單資訊並選擇代買者',
-    type: 'website',
-  }
+// Metadata handled by layout for client component
+
+interface CartItem {
+  id: number
+  name: string
+  price: number
+  quantity: number
+  image: string
+  store: string
+  available: boolean
 }
 
 // Mock order data - would come from cart/state management in real app
@@ -103,6 +107,84 @@ function formatPrice(price: number): string {
 }
 
 export default function OrderPage() {
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedProxy, setSelectedProxy] = useState<string>('')
+  const [specialRequests, setSpecialRequests] = useState<string>('')
+  const [submitting, setSubmitting] = useState(false)
+
+  // Load cart items from localStorage
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cart')
+    if (savedCart) {
+      const items = JSON.parse(savedCart)
+      const availableItems = items.filter((item: CartItem) => item.available)
+      setCartItems(availableItems)
+    }
+    setLoading(false)
+  }, [])
+
+  const handleOrderSubmit = async () => {
+    if (!selectedProxy) {
+      alert('請選擇代買者')
+      return
+    }
+
+    setSubmitting(true)
+    
+    // Simulate API call
+    setTimeout(() => {
+      // Create order data for success page
+      const orderInfo = {
+        orderId: `NOW${Date.now()}`,
+        items: cartItems,
+        totalAmount: subtotal + deliveryFee + serviceFee,
+        selectedProxy: suggestedProxies.find(p => p.id.toString() === selectedProxy),
+        specialRequests,
+        timestamp: new Date().toISOString()
+      }
+      
+      // Save order info and clear cart
+      localStorage.setItem('lastOrder', JSON.stringify(orderInfo))
+      localStorage.removeItem('cart')
+      
+      // Redirect to success page
+      window.location.href = '/order/success'
+    }, 2000)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF6B35] mx-auto mb-4"></div>
+          <p className="text-gray-600">載入訂單資訊...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirect to cart if no items
+  if (cartItems.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-gray-900 mb-4">沒有可下單的商品</h2>
+          <Link href="/cart">
+            <Button className="bg-[#FF6B35] hover:bg-orange-600 text-white">
+              返回購物車
+            </Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const deliveryFee = 30
+  const serviceFee = Math.max(subtotal * 0.05, 20)
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -179,7 +261,7 @@ export default function OrderPage() {
                 <CardTitle>訂購商品</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {orderData.items.map((item, index) => (
+                {cartItems.map((item, index) => (
                   <div key={item.id}>
                     <div className="flex gap-4">
                       <div className="relative w-16 h-16 flex-shrink-0">
@@ -203,7 +285,7 @@ export default function OrderPage() {
                         </div>
                       </div>
                     </div>
-                    {index < orderData.items.length - 1 && <Separator className="mt-4" />}
+                    {index < cartItems.length - 1 && <Separator className="mt-4" />}
                   </div>
                 ))}
               </CardContent>
@@ -218,7 +300,7 @@ export default function OrderPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <RadioGroup defaultValue="1" className="space-y-4">
+                <RadioGroup value={selectedProxy} onValueChange={setSelectedProxy} className="space-y-4">
                   {availableProxies.map((proxy) => (
                     <div key={proxy.id} className="relative">
                       <div className="flex items-center space-x-2 absolute top-4 left-4 z-10">
@@ -302,6 +384,8 @@ export default function OrderPage() {
               </CardHeader>
               <CardContent>
                 <Textarea 
+                  value={specialRequests}
+                  onChange={(e) => setSpecialRequests(e.target.value)}
                   placeholder="如有特殊需求請註明，例如：商品挑選標準、配送時間要求等..."
                   className="min-h-[100px]"
                 />
@@ -337,9 +421,22 @@ export default function OrderPage() {
                 </div>
 
                 <div className="space-y-3">
-                  <Button className="w-full bg-[#FF6B35] hover:bg-orange-600 text-white font-semibold py-3">
-                    <CreditCard className="w-5 h-5 mr-2" />
-                    確認下單
+                  <Button 
+                    onClick={handleOrderSubmit}
+                    disabled={submitting || !selectedProxy}
+                    className="w-full bg-[#FF6B35] hover:bg-orange-600 text-white font-semibold py-3 disabled:bg-gray-400"
+                  >
+                    {submitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        處理中...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="w-5 h-5 mr-2" />
+                        確認下單
+                      </>
+                    )}
                   </Button>
                   
                   <div className="text-xs text-gray-500 space-y-1">

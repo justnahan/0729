@@ -71,13 +71,15 @@ export function NavBar() {
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
             {/* Search Button - Hidden on mobile */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hidden sm:flex text-gray-600 hover:text-[#FF6B35]"
-            >
-              <Search className="h-5 w-5" />
-            </Button>
+            <Link href="/search">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hidden sm:flex text-gray-600 hover:text-[#FF6B35]"
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+            </Link>
 
             {/* Shopping Cart */}
             <Link href="/cart">
@@ -204,13 +206,15 @@ export function NavBar() {
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <div className="flex flex-col space-y-4 mt-6">
                   {/* Mobile Search */}
-                  <Button
-                    variant="outline"
-                    className="justify-start border-gray-200 hover:border-[#FF6B35] hover:text-[#FF6B35]"
-                  >
-                    <Search className="mr-2 h-4 w-4" />
-                    搜尋商品...
-                  </Button>
+                  <Link href="/search">
+                    <Button
+                      variant="outline"
+                      className="justify-start border-gray-200 hover:border-[#FF6B35] hover:text-[#FF6B35] w-full"
+                    >
+                      <Search className="mr-2 h-4 w-4" />
+                      搜尋商品...
+                    </Button>
+                  </Link>
 
                   {/* Mobile Navigation Links */}
                   <div className="space-y-2">

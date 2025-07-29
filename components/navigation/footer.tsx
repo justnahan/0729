@@ -27,16 +27,16 @@ const footerLinks = {
     { label: '商家合作', href: '#' as const },
   ],
   support: [
-    { label: '幫助中心', href: '#' as const },
+    { label: '幫助中心', href: '/help' as const },
     { label: '聯絡客服', href: '/contact' as const },
-    { label: '常見問題', href: '#' as const },
-    { label: '使用教學', href: '#' as const },
+    { label: '常見問題', href: '/contact/faq' as const },
+    { label: '使用教學', href: '/help' as const },
   ],
   legal: [
-    { label: '使用條款', href: '#' as const },
-    { label: '隱私政策', href: '#' as const },
-    { label: '退款政策', href: '#' as const },
-    { label: '爭議處理', href: '#' as const },
+    { label: '使用條款', href: '/legal/terms' as const },
+    { label: '隱私政策', href: '/legal/privacy' as const },
+    { label: '退款政策', href: '/legal/terms' as const },
+    { label: '爭議處理', href: '/legal/terms' as const },
   ]
 }
 

@@ -1,11 +1,10 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-import Image from 'next/image'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ReloadButton } from '@/components/reload-button'
+import { ProductCard } from '@/components/product-card'
 
 export const metadata: Metadata = {
   title: '商品列表 | 現在買 NowBuy',
@@ -48,43 +47,6 @@ function formatPrice(cents: number): string {
   return `NT$${(cents / 100).toLocaleString()}`
 }
 
-function ProductCard({ product }: { product: Product }) {
-  return (
-    <Card className="group hover:scale-[1.02] hover:shadow-lg transition-all duration-200">
-      <CardHeader className="p-0">
-        <div className="aspect-square relative overflow-hidden rounded-t-lg">
-          <Image
-            src={product.image_url}
-            alt={product.name}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-          />
-        </div>
-      </CardHeader>
-      <CardContent className="p-4">
-        <CardTitle className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-          {product.name}
-        </CardTitle>
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col gap-1">
-            <Badge variant="secondary" className="text-[#FF6B35] bg-orange-50 w-fit">
-              預估價格
-            </Badge>
-            <span className="text-2xl font-bold text-[#FF6B35]">
-              {formatPrice(product.price_in_cents)}
-            </span>
-          </div>
-          <Button 
-            className="bg-[#FF6B35] hover:bg-orange-600 text-white font-medium px-6"
-          >
-            立即下單
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
 
 function LoadingGrid() {
   return (
