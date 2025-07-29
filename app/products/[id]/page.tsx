@@ -16,21 +16,30 @@ interface Product {
 
 async function fetchProducts(): Promise<Product[]> {
   try {
-    // Server-side: read directly from JSON file for better performance
-    const { promises: fs } = await import('fs')
-    const path = await import('path')
-    const jsonPath = path.join(process.cwd(), 'public', 'products.json')
-    const fileContents = await fs.readFile(jsonPath, 'utf8')
-    return JSON.parse(fileContents)
-  } catch (error) {
-    // Fallback to API call if file read fails
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products`, {
+    // Prioritize API route for better production stability
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    
+    const response = await fetch(`${baseUrl}/api/products`, {
       cache: 'no-store'
     })
+    
     if (!response.ok) {
-      throw new Error('Failed to fetch products')
+      throw new Error('API request failed')
     }
+    
     return response.json()
+  } catch (error) {
+    // Fallback to direct file read only if API fails
+    try {
+      const { promises: fs } = await import('fs')
+      const path = await import('path')
+      const jsonPath = path.join(process.cwd(), 'public', 'products.json')
+      const fileContents = await fs.readFile(jsonPath, 'utf8')
+      return JSON.parse(fileContents)
+    } catch (fsError) {
+      throw new Error('Failed to fetch products from both API and file system')
+    }
   }
 }
 
@@ -86,7 +95,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               className="object-cover rounded-lg"
               sizes="(max-width: 768px) 100vw, 50vw"
               priority={true}
-              unoptimized={false}
+              unoptimized={true}
             />
           </div>
 
