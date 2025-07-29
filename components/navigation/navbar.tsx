@@ -14,9 +14,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { CartCounter } from '@/components/cart-counter'
 import { 
   Menu, 
-  ShoppingCart, 
   User, 
   Bell, 
   Search,
@@ -37,7 +37,6 @@ const navigationItems = [
 export function NavBar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(true) // Mock login state
-  const [cartCount] = useState(3) // Mock cart count
   const [notificationCount] = useState(2) // Mock notifications
 
   return (
@@ -82,22 +81,7 @@ export function NavBar() {
             </Link>
 
             {/* Shopping Cart */}
-            <Link href="/cart">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="relative text-gray-600 hover:text-[#FF6B35]"
-              >
-                <ShoppingCart className="h-5 w-5" />
-                {cartCount > 0 && (
-                  <Badge 
-                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs bg-[#FF6B35] hover:bg-orange-600"
-                  >
-                    {cartCount}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
+            <CartCounter />
 
             {/* Notifications */}
             {isLoggedIn && (

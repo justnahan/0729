@@ -2,10 +2,10 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Star, MapPin, Clock, ShoppingCart } from 'lucide-react'
+import { Star, MapPin, Clock } from 'lucide-react'
+import { ProductActions } from '@/components/product-actions'
 
 interface Product {
   id: number
@@ -15,13 +15,23 @@ interface Product {
 }
 
 async function fetchProducts(): Promise<Product[]> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products`, {
-    cache: 'no-store'
-  })
-  if (!response.ok) {
-    throw new Error('Failed to fetch products')
+  try {
+    // Server-side: read directly from JSON file for better performance
+    const { promises: fs } = await import('fs')
+    const path = await import('path')
+    const jsonPath = path.join(process.cwd(), 'public', 'products.json')
+    const fileContents = await fs.readFile(jsonPath, 'utf8')
+    return JSON.parse(fileContents)
+  } catch (error) {
+    // Fallback to API call if file read fails
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products`, {
+      cache: 'no-store'
+    })
+    if (!response.ok) {
+      throw new Error('Failed to fetch products')
+    }
+    return response.json()
   }
-  return response.json()
 }
 
 async function getProduct(id: string): Promise<Product | null> {
@@ -75,6 +85,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               fill
               className="object-cover rounded-lg"
               sizes="(max-width: 768px) 100vw, 50vw"
+              priority={true}
+              unoptimized={false}
             />
           </div>
 
@@ -134,22 +146,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </Card>
 
             {/* 行動按鈕 */}
-            <div className="space-y-3">
-              <Button 
-                size="lg" 
-                className="w-full bg-[#FF6B35] hover:bg-orange-600 text-white font-semibold h-14 text-lg"
-              >
-                <ShoppingCart className="w-5 h-5 mr-2" />
-                立即下單代買
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="w-full border-[#FF6B35] text-[#FF6B35] hover:bg-orange-50 h-12"
-              >
-                加入購物清單
-              </Button>
-            </div>
+            <ProductActions product={product} />
 
             {/* 服務保障 */}
             <div className="bg-blue-50 rounded-lg p-4">
